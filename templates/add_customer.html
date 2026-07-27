@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+
+{% block title %}Add Customer{% endblock %}
+
+{% block page_title %}
+Add Customer
+{% endblock %}
+
+{% block content %}
+
+<div class="card shadow p-4">
+
+<form method="POST">
+
+<div class="row">
+
+<div class="col-md-6 mb-3">
+<label class="form-label">First Name</label>
+<input type="text" class="form-control" name="first_name" required>
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Last Name</label>
+<input type="text" class="form-control" name="last_name" required>
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Company</label>
+<input type="text" class="form-control" name="company">
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Email</label>
+<input type="email" class="form-control" name="email">
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Phone</label>
+<input type="text" class="form-control" name="phone">
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Segment</label>
+<select class="form-select" name="segment">
+    <option>Active</option>
+    <option>Dormant</option>
+    <option>VIP</option>
+    <option>Quote Only</option>
+</select>
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Status</label>
+<select class="form-select" name="status">
+    <option>Active</option>
+    <option>Pending</option>
+    <option>Inactive</option>
+</select>
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Last Contact</label>
+<input type="date" class="form-control" name="last_contact">
+</div>
+
+<div class="col-12 mb-3">
+<label class="form-label">Notes</label>
+<textarea class="form-control" rows="4" name="notes"></textarea>
+</div>
+
+<div class="col-12">
+
+<button class="btn btn-success">
+💾 Save Customer
+</button>
+
+<a href="/customers" class="btn btn-secondary">
+Cancel
+</a>
+
+</div>
+
+</div>
+
+</form>
+
+</div>
+
+{% endblock %}

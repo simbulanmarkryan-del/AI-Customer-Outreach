@@ -1,0 +1,864 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="alert alert-primary shadow-sm">
+
+    <h4>
+        <i class="bi bi-stars"></i>
+        Welcome, {{ current_user.name }}
+    </h4>
+
+    <p class="mb-0">
+        Monitor customer engagement, manage outreach campaigns,
+        and review AI recommendations from one dashboard.
+    </p>
+
+</div>
+
+<!-- ===================================== -->
+<!-- Dashboard Summary -->
+<!-- ===================================== -->
+
+<div class="row g-4">
+
+    <div class="col-lg-3 col-md-6">
+
+        <a href="/customers" class="text-decoration-none">
+
+            <div class="card p-4 h-100">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <small class="text-muted">
+                            Customers
+                        </small>
+
+                        <h2 class="mt-2 fw-bold">
+                            {{ customer_count }}
+                        </h2>
+
+                    </div>
+
+                    <i class="bi bi-people fs-1 text-secondary"></i>
+
+                </div>
+
+            </div>
+
+        </a>
+
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+
+        <a href="/outreach" class="text-decoration-none">
+
+            <div class="card p-4 h-100">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <small class="text-muted">
+                            Outreach
+                        </small>
+
+                        <h2 class="mt-2 fw-bold">
+                            {{ outreach_count }}
+                        </h2>
+
+                    </div>
+
+                    <i class="bi bi-chat-square-text fs-1 text-secondary"></i>
+
+                </div>
+
+            </div>
+
+        </a>
+
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+
+        <a href="/outreach" class="text-decoration-none">
+
+            <div class="card p-4 h-100">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <small class="text-muted">
+                            Drafts
+                        </small>
+
+                        <h2 class="mt-2 fw-bold">
+                            {{ draft_count }}
+                        </h2>
+
+                    </div>
+
+                    <i class="bi bi-pencil-square fs-1 text-secondary"></i>
+
+                </div>
+
+            </div>
+
+        </a>
+
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+
+        <a href="/outreach" class="text-decoration-none">
+
+            <div class="card p-4 h-100">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <small class="text-muted">
+                            Sent
+                        </small>
+
+                        <h2 class="mt-2 fw-bold">
+                            {{ sent_count }}
+                        </h2>
+
+                    </div>
+
+                    <i class="bi bi-send-check fs-1 text-secondary"></i>
+
+                </div>
+
+            </div>
+
+        </a>
+
+    </div>
+
+</div>
+
+<!-- ===================================== -->
+<!-- Recent Outreach -->
+<!-- ===================================== -->
+
+<div class="card shadow mt-4">
+
+    <div class="card-header bg-white">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <h5 class="mb-0">
+                Recent Outreach
+            </h5>
+
+            <a href="/outreach" class="btn btn-outline-primary btn-sm">
+                View All
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="card-body">
+
+        {% if recent_outreach %}
+
+        <table class="table table-striped table-hover align-middle">
+
+            <thead class="table-dark">
+
+                <tr>
+
+                    <th>Customer</th>
+                    <th>Channel</th>
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in recent_outreach %}
+
+                <tr>
+
+                    <td>
+                        {{ item.customer.first_name }}
+                        {{ item.customer.last_name }}
+                    </td>
+
+                    <td>{{ item.channel }}</td>
+
+                    <td>
+
+                        {% if item.status == "Draft" %}
+                            <span class="badge bg-warning text-dark">Draft</span>
+
+                        {% elif item.status == "Approved" %}
+                            <span class="badge bg-primary">Approved</span>
+
+                        {% elif item.status == "Sent" %}
+                            <span class="badge bg-success">Sent</span>
+
+                        {% else %}
+                            <span class="badge bg-secondary">
+                                {{ item.status }}
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <div class="alert alert-info mb-0">
+
+            No outreach activity yet.
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<!-- ===================================== -->
+<!-- Charts -->
+<!-- ===================================== -->
+
+<div class="row mt-4">
+
+    <div class="col-lg-8">
+
+        <div class="card shadow h-100">
+
+            <div class="card-header bg-white">
+
+                <h5 class="mb-0">
+                    <i class="bi bi-bar-chart-line"></i>
+                    Outreach Analytics
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <div style="height:350px;">
+
+                    <canvas id="outreachChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-4">
+
+        <div class="card shadow h-100">
+
+            <div class="card-header bg-white">
+
+                <h5 class="mb-0">
+                    <i class="bi bi-pie-chart"></i>
+                    Outreach Status
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <div style="height:350px;">
+
+                    <canvas id="statusChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ===================================== -->
+<!-- AI Recommendations -->
+<!-- ===================================== -->
+
+<div class="card shadow mt-4">
+
+    <div class="card-header bg-white">
+
+        <h5 class="mb-0">
+
+            🤖 AI Recommendations
+
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        {% if customer_count == 0 %}
+
+        <div class="alert alert-warning">
+
+            No customers found. Add your first customer to begin.
+
+        </div>
+
+        {% else %}
+
+        <ul class="list-group">
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+
+                <span>
+
+                    <i class="bi bi-people me-2 text-primary"></i>
+
+                    Total Customers
+
+                </span>
+
+                <strong>{{ customer_count }}</strong>
+
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+
+                <span>
+
+                    <i class="bi bi-chat-square-text me-2 text-success"></i>
+
+                    Outreach Campaigns
+
+                </span>
+
+                <strong>{{ outreach_count }}</strong>
+
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+
+                <span>
+
+                    <i class="bi bi-pencil-square me-2 text-warning"></i>
+
+                    Draft Messages
+
+                </span>
+
+                <strong>{{ draft_count }}</strong>
+
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+
+                <span>
+
+                    <i class="bi bi-send-check me-2 text-info"></i>
+
+                    Sent Messages
+
+                </span>
+
+                <strong>{{ sent_count }}</strong>
+
+            </li>
+
+            {% if draft_count > 0 %}
+
+            <li class="list-group-item list-group-item-warning">
+
+                💡 Review your draft messages before sending them.
+
+            </li>
+
+            {% endif %}
+
+            {% if outreach_count == 0 %}
+
+            <li class="list-group-item list-group-item-info">
+
+                💡 Create your first outreach campaign.
+
+            </li>
+
+            {% endif %}
+
+        </ul>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<!-- ===================================== -->
+<!-- Recently Added Customers -->
+<!-- ===================================== -->
+
+<div class="card shadow mt-4">
+
+    <div class="card-header bg-success text-white">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <h5 class="mb-0">
+
+                👥 Recently Added Customers
+
+            </h5>
+
+            <a href="/customers" class="btn btn-light btn-sm">
+
+                View All
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="card-body">
+
+        {% if recent_customers %}
+
+        <table class="table table-hover align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th>Name</th>
+
+                    <th>Company</th>
+
+                    <th>Status</th>
+
+                    <th width="90">Action</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for customer in recent_customers %}
+
+                <tr>
+
+                    <td>
+
+                        {{ customer.first_name }}
+                        {{ customer.last_name }}
+
+                    </td>
+
+                    <td>{{ customer.company }}</td>
+
+                    <td>
+
+                        <span class="badge bg-secondary">
+
+                            {{ customer.status }}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <a href="/customers/{{ customer.id }}"
+                           class="btn btn-sm btn-outline-primary">
+
+                            View
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <div class="alert alert-info mb-0">
+
+            No customers yet.
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<!-- ===================================== -->
+<!-- Upcoming Follow-ups -->
+<!-- ===================================== -->
+
+<div class="card shadow mt-4">
+
+    <div class="card-header bg-warning">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <h5 class="mb-0">
+
+                📅 Upcoming Follow-ups
+
+            </h5>
+
+            <a href="/outreach" class="btn btn-dark btn-sm">
+
+                View All
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="card-body">
+
+        {% if upcoming_followups %}
+
+        <table class="table table-striped table-hover align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th>Customer</th>
+                    <th>Follow-up</th>
+                    <th>Status</th>
+                    <th width="90">Action</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for item in upcoming_followups %}
+
+                <tr>
+
+                    <td>
+
+                        {{ item.customer.first_name }}
+                        {{ item.customer.last_name }}
+
+                    </td>
+
+                    <td>{{ item.follow_up }}</td>
+
+                    <td>
+
+                        <span class="badge bg-info">
+
+                            {{ item.status }}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <a href="/outreach"
+                           class="btn btn-sm btn-outline-success">
+
+                            Open
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <div class="alert alert-success mb-0">
+
+            🎉 No upcoming follow-ups.
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<!-- ===================================== -->
+<!-- Quick Actions -->
+<!-- ===================================== -->
+
+<div class="card shadow mt-4">
+
+    <div class="card-header bg-dark text-white">
+
+        <h5 class="mb-0">
+
+            ⚡ Quick Actions
+
+        </h5>
+
+    </div>
+
+    <div class="card-body d-flex flex-wrap gap-2">
+
+        <a href="/customers/add" class="btn btn-outline-primary">
+
+            <i class="bi bi-person-plus"></i>
+
+            Add Customer
+
+        </a>
+
+        <a href="/outreach/add" class="btn btn-outline-success">
+
+            <i class="bi bi-envelope-plus"></i>
+
+            New Outreach
+
+        </a>
+
+        <a href="/reports" class="btn btn-outline-secondary">
+
+            <i class="bi bi-bar-chart"></i>
+
+            Reports
+
+        </a>
+
+        <a href="/settings" class="btn btn-outline-secondary">
+
+            <i class="bi bi-gear"></i>
+
+            Settings
+
+        </a>
+
+    </div>
+
+</div>
+
+<!-- ===================================== -->
+<!-- Activity Timeline -->
+<!-- ===================================== -->
+
+<div class="card shadow mt-4">
+
+    <div class="card-header">
+
+        <h5 class="mb-0">
+
+            <i class="bi bi-clock-history"></i>
+
+            Activity Timeline
+
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        {% if activities %}
+
+            {% for activity in activities %}
+
+            <div class="d-flex align-items-start mb-3">
+
+                <div class="me-3">
+
+                    <i class="bi bi-{{ activity.icon }} fs-4 text-primary"></i>
+
+                </div>
+
+                <div>
+
+                    <strong>{{ activity.title }}</strong>
+
+                    <br>
+
+                    {{ activity.description }}
+
+                    <br>
+
+                    <small class="text-muted">
+
+                        {{ activity.time }}
+
+                    </small>
+
+                </div>
+
+            </div>
+
+            {% if not loop.last %}
+            <hr>
+            {% endif %}
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="alert alert-info mb-0">
+
+                No recent activity.
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const draftCount = Number("{{ draft_count }}");
+    const sentCount = Number("{{ sent_count }}");
+
+    const outreachCanvas = document.getElementById("outreachChart");
+
+    if (outreachCanvas) {
+
+        new Chart(outreachCanvas.getContext("2d"), {
+
+            type: "bar",
+
+            data: {
+
+                labels: ["Draft", "Sent"],
+
+                datasets: [{
+
+                    label: "Messages",
+
+                    data: [draftCount, sentCount]
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+
+                        display: false
+
+                    }
+
+                },
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        ticks: {
+
+                            precision: 0
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        });
+
+    }
+
+    const statusCanvas = document.getElementById("statusChart");
+
+    if (statusCanvas) {
+
+        new Chart(statusCanvas.getContext("2d"), {
+
+            type: "pie",
+
+            data: {
+
+                labels: ["Draft", "Sent"],
+
+                datasets: [{
+
+                    data: [draftCount, sentCount]
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false
+
+            }
+
+        });
+
+    }
+
+});
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,181 @@
+{% extends "layout.html" %}
+
+{% block title %}Customers{% endblock %}
+
+{% block page_title %}
+Customer Management
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h3 class="mb-1">Customers</h3>
+
+        <p class="text-muted mb-0">
+            Manage customer information and relationships.
+        </p>
+
+    </div>
+
+    <a href="/customers/add" class="btn btn-primary">
+
+        <i class="bi bi-person-plus"></i>
+
+        Add Customer
+
+    </a>
+
+</div>
+
+<div class="card mb-4">
+
+    <div class="card-body">
+
+        <form method="GET">
+
+            <div class="row g-3">
+
+                <div class="col-md-10">
+
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ request.args.get('search','') }}"
+                        class="form-control"
+                        placeholder="Search by customer, company or email">
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <button class="btn btn-primary w-100">
+
+                        <i class="bi bi-search"></i>
+
+                        Search
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<table class="table table-hover shadow bg-white align-middle">
+
+    <thead class="table-light">
+
+        <tr>
+
+            <th>Name</th>
+
+            <th>Company</th>
+
+            <th>Email</th>
+
+            <th>Status</th>
+
+            <th class="text-center">Actions</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+    {% for customer in customers %}
+
+        <tr>
+
+            <td>
+
+                <a href="/customers/{{ customer.id }}"
+                   class="text-decoration-none fw-semibold">
+
+                    {{ customer.first_name }}
+                    {{ customer.last_name }}
+
+                </a>
+
+            </td>
+
+            <td>{{ customer.company }}</td>
+
+            <td>{{ customer.email }}</td>
+
+            <td>
+
+                {% if customer.status == "Active" %}
+
+                    <span class="badge bg-success">
+                        Active
+                    </span>
+
+                {% elif customer.status == "Inactive" %}
+
+                    <span class="badge bg-secondary">
+                        Inactive
+                    </span>
+
+                {% elif customer.status == "Prospect" %}
+
+                    <span class="badge bg-warning text-dark">
+                        Prospect
+                    </span>
+
+                {% else %}
+
+                    <span class="badge bg-info text-dark">
+                        {{ customer.status }}
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+            <td class="text-center">
+
+                <a href="/customers/{{ customer.id }}"
+                   class="btn btn-sm btn-outline-primary"
+                   title="View">
+
+                    <i class="bi bi-eye"></i>
+
+                </a>
+
+                <a href="/customers/edit/{{ customer.id }}"
+                   class="btn btn-sm btn-outline-secondary"
+                   title="Edit">
+
+                    <i class="bi bi-pencil"></i>
+
+                </a>
+
+                <a href="/customers/delete/{{ customer.id }}"
+                   class="btn btn-sm btn-outline-danger"
+                   title="Delete"
+                   onclick="return confirm('Delete this customer?')">
+
+                    <i class="bi bi-trash"></i>
+
+                </a>
+
+            </td>
+
+        </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

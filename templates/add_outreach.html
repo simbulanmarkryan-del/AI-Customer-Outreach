@@ -1,0 +1,217 @@
+{% extends "layout.html" %}
+
+{% block title %}Add Outreach{% endblock %}
+
+{% block page_title %}Add Outreach{% endblock %}
+
+{% block content %}
+
+<div class="card shadow">
+
+    <div class="card-header">
+        <h4>🤖 Create Outreach</h4>
+    </div>
+
+    <div class="card-body">
+
+        <form method="POST">
+
+            <!-- Customer -->
+            <div class="mb-3">
+
+                <label class="form-label">Customer</label>
+
+                <select name="customer_id" class="form-select" required>
+
+                    {% for customer in customers %}
+
+                    <option value="{{ customer.id }}">
+                        {{ customer.first_name }} {{ customer.last_name }} - {{ customer.company }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <!-- Channel -->
+            <div class="mb-3">
+
+                <label class="form-label">Channel</label>
+
+                <select
+                    name="channel"
+                    class="form-select"
+                    onchange="generateMessage()">
+
+                    <option>Email</option>
+                    <option>SMS</option>
+
+                </select>
+
+            </div>
+
+            <!-- Message -->
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Message
+                </label>
+
+                <textarea
+                    id="message"
+                    name="message"
+                    class="form-control"
+                    rows="8"
+                    placeholder="Click 'Generate AI Message' to create a draft..."
+                    onkeyup="countCharacters()"
+                ></textarea>
+
+                <small class="text-muted">
+                    Characters:
+                    <span id="charCount">0</span>
+                </small>
+
+                <br><br>
+
+                <button
+                    type="button"
+                    class="btn btn-success"
+                    onclick="generateMessage()">
+
+                    🤖 Generate AI Message
+
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    onclick="clearMessage()">
+
+                    Clear
+
+                </button>
+
+            </div>
+
+            <!-- Status -->
+            <div class="mb-3">
+
+                <label class="form-label">Status</label>
+
+                <select name="status" class="form-select">
+
+                    <option>Draft</option>
+                    <option>Approved</option>
+                    <option>Sent</option>
+
+                </select>
+
+            </div>
+
+            <!-- Follow Up -->
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Follow-up Date
+                </label>
+
+                <input
+                    type="date"
+                    name="follow_up"
+                    class="form-control">
+
+            </div>
+
+            <button class="btn btn-primary">
+                Save Outreach
+            </button>
+
+            <a href="/outreach" class="btn btn-secondary">
+                Cancel
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+
+function generateMessage(){
+
+    const customer =
+        document.querySelector('select[name="customer_id"]');
+
+    const customerName =
+        customer.options[customer.selectedIndex].text;
+
+    const channel =
+        document.querySelector('select[name="channel"]').value;
+
+    let message = "";
+
+    if(channel === "Email"){
+
+message =
+`Subject: We Appreciate Your Business
+
+Hello ${customerName},
+
+We hope you're doing well.
+
+Thank you for being a valued customer. We wanted to check in and see if there's anything we can assist you with or answer for you.
+
+If you'd like more information about our services, simply reply to this email.
+
+We look forward to hearing from you.
+
+Best regards,
+
+CustomerPulse AI Team`;
+
+    }
+
+    else{
+
+message =
+`Hi ${customerName},
+
+We hope you're doing well!
+
+We're just checking in to see if there's anything we can help you with.
+
+Feel free to reply anytime.
+
+Thank you!
+
+- CustomerPulse AI`;
+
+    }
+
+    document.getElementById("message").value = message;
+
+    countCharacters();
+
+}
+
+function clearMessage(){
+
+    document.getElementById("message").value="";
+
+    countCharacters();
+
+}
+
+function countCharacters(){
+
+    document.getElementById("charCount").innerHTML =
+        document.getElementById("message").value.length;
+
+}
+
+</script>
+
+{% endblock %}

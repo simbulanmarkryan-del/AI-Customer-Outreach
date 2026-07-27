@@ -1,0 +1,563 @@
+{% extends "layout.html" %}
+
+{% block title %}Customer Profile{% endblock %}
+
+{% block page_title %}Customer Profile{% endblock %}
+
+{% block content %}
+
+<!-- Customer Information -->
+<div class="card shadow">
+
+    <div class="card-header bg-primary text-white">
+        <h3>👤 {{ customer.first_name }} {{ customer.last_name }}</h3>
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <p><strong>Company:</strong> {{ customer.company }}</p>
+
+                <p><strong>Email:</strong> {{ customer.email }}</p>
+
+                <p><strong>Phone:</strong> {{ customer.phone }}</p>
+
+            </div>
+
+            <div class="col-md-6">
+
+                <p><strong>Segment:</strong> {{ customer.segment }}</p>
+
+                <p>
+                    <strong>AI Segment:</strong>
+
+                     <span class="badge bg-primary">
+                     {{ customer.segment }}
+    </span>
+                </p>
+
+                <p><strong>Status:</strong>
+
+                    {% if customer.status == "Active" %}
+                        <span class="badge bg-success">Active</span>
+
+                    {% elif customer.status == "Dormant" %}
+                        <span class="badge bg-warning text-dark">Dormant</span>
+
+                    {% else %}
+                        <span class="badge bg-secondary">{{ customer.status }}</span>
+
+                    {% endif %}
+
+                </p>
+
+                <p><strong>Last Contact:</strong> {{ customer.last_contact }}</p>
+
+            </div>
+
+        </div>
+
+        <hr>
+
+        <h5>📝 Notes</h5>
+
+        <div class="border rounded p-3 bg-light">
+            {{ customer.notes or "No notes available." }}
+        </div>
+
+        <div class="alert alert-info mt-4">
+
+            <strong>🤖 AI Recommendation</strong>
+
+            <hr>
+
+            <p>
+                Review this customer's history and send a personalized
+                follow-up message to maintain engagement.
+            </p>
+
+            <div class="mt-3">
+
+                <a href="/customers/segment/{{ customer.id }}"
+                   class="btn btn-primary">
+
+                    <i class="bi bi-stars"></i>
+
+                    Analyze Customer
+
+                </a>
+
+                <a href="/outreach/add"
+                   class="btn btn-success">
+
+                    <i class="bi bi-envelope"></i>
+
+                    Create Outreach
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <a href="/customers/edit/{{ customer.id }}"
+           class="btn btn-warning">
+
+            <i class="bi bi-pencil-square"></i>
+
+            Edit Customer
+
+        </a>
+
+        <a href="/customers"
+           class="btn btn-secondary">
+
+            <i class="bi bi-arrow-left"></i>
+
+            Back
+
+        </a>
+
+    </div>
+
+</div>
+
+<!-- AI Follow-up Suggestions -->
+
+<div class="card shadow mt-4">
+
+    <div class="card-header bg-success text-white">
+        <h4>🤖 AI Follow-up Suggestions</h4>
+    </div>
+
+    <div class="card-body">
+
+        {% if customer.outreach|length == 0 %}
+
+            <div class="alert alert-warning">
+                This customer has never been contacted.
+            </div>
+
+            <p>
+                Recommendation:
+                Send a welcome email introducing your services.
+            </p>
+
+        {% else %}
+
+            <ul class="list-group">
+
+                <li class="list-group-item">
+                    👤 Customer:
+                    <strong>{{ customer.first_name }} {{ customer.last_name }}</strong>
+                </li>
+
+                <li class="list-group-item">
+                    🏢 Company:
+                    <strong>{{ customer.company }}</strong>
+                </li>
+
+                <li class="list-group-item">
+                    📨 Outreach History:
+                    <strong>{{ customer.outreach|length }}</strong> message(s)
+                </li>
+
+                <li class="list-group-item">
+                    💡 Recommendation:
+                    Send a personalized follow-up and ask if additional assistance is needed.
+                </li>
+
+            </ul>
+
+        {% endif %}
+
+        <div class="mt-4">
+
+            <a href="/outreach/add" class="btn btn-success">
+
+                <i class="bi bi-envelope-paper"></i>
+
+                Generate Follow-up
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Activity Timeline -->
+
+<div class="card shadow mt-4">
+
+    <div class="card-header bg-dark text-white">
+        <h4>📅 Customer Activity Timeline</h4>
+    </div>
+
+    <div class="card-body">
+
+        {% if customer.outreach %}
+
+            {% for item in customer.outreach|reverse %}
+
+            <div class="border-start border-4 border-primary ps-3 mb-4">
+
+                <h5 class="mb-1">
+
+                    {% if item.status == "Draft" %}
+                        📝 Draft Created
+                    {% elif item.status == "Approved" %}
+                        ✅ Message Approved
+                    {% elif item.status == "Sent" %}
+                        📧 Message Sent
+                    {% else %}
+                        📨 Outreach Activity
+                    {% endif %}
+
+                </h5>
+
+                <p class="text-muted mb-2">
+                    <strong>Channel:</strong> {{ item.channel }}
+                </p>
+
+                <p class="mb-2">
+                    {{ item.message }}
+                </p>
+
+                <span class="badge bg-info">
+                    Follow-up: {{ item.follow_up }}
+                </span>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+        <div class="alert alert-info">
+
+            <h5>No activity yet.</h5>
+
+            <p>
+                Create the first outreach message for this customer.
+            </p>
+
+            <a href="/outreach/add" class="btn btn-primary">
+
+                <i class="bi bi-plus-circle"></i>
+
+                Create Outreach
+
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<!-- AI Customer Score -->
+
+<div class="card shadow mt-4">
+    <div class="card-header bg-info text-white">
+        <h4><i class="bi bi-graph-up"></i> AI Customer Score</h4>
+    </div>
+
+    <div class="card-body text-center">
+
+        {% if customer.status == "Active" %}
+            <h1 class="display-3 text-success">92%</h1>
+            <p>This customer is highly engaged.</p>
+
+        {% elif customer.status == "Dormant" %}
+            <h1 class="display-3 text-warning">58%</h1>
+            <p>Needs a follow-up soon.</p>
+
+        {% else %}
+            <h1 class="display-3 text-secondary">40%</h1>
+            <p>Limited customer activity.</p>
+        {% endif %}
+
+    </div>
+</div>
+
+<!-- Customer Statistics -->
+
+<div class="row mt-4">
+
+    <div class="col-md-4">
+
+        <div class="card shadow-sm h-100">
+
+            <div class="card-body text-center">
+
+                <i class="bi bi-chat-left-text fs-1 text-primary"></i>
+
+                <h6 class="text-muted mt-2">Total Outreach</h6>
+
+                <h2>{{ customer.outreach|length }}</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="card shadow-sm h-100">
+
+            <div class="card-body text-center">
+
+                <i class="bi bi-person-check fs-1 text-success"></i>
+
+                <h6 class="text-muted mt-2">Customer Status</h6>
+
+                <h2>{{ customer.status }}</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="card shadow-sm h-100">
+
+            <div class="card-body text-center">
+
+                <i class="bi bi-diagram-3 fs-1 text-warning"></i>
+
+                <h6 class="text-muted mt-2">Customer Segment</h6>
+
+                <h2>{{ customer.segment }}</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- AI Risk Assessment -->
+
+<div class="card shadow mt-4">
+
+    <div class="card-header bg-danger text-white">
+
+        <h4>
+            <i class="bi bi-shield-exclamation"></i>
+            AI Risk Assessment
+        </h4>
+
+    </div>
+
+    <div class="card-body">
+
+        {% if customer.status == "Dormant" %}
+
+            <div class="alert alert-danger">
+
+                <h5>
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    High Risk
+                </h5>
+
+                <p class="mb-0">
+                    This customer is currently dormant and may stop engaging.
+                    An immediate follow-up is recommended.
+                </p>
+
+            </div>
+
+        {% elif customer.outreach|length == 0 %}
+
+            <div class="alert alert-warning">
+
+                <h5>
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    Medium Risk
+                </h5>
+
+                <p class="mb-0">
+                    This customer has not received any outreach yet.
+                    Send an introduction or welcome message.
+                </p>
+
+            </div>
+
+        {% else %}
+
+            <div class="alert alert-success">
+
+                <h5>
+                    <i class="bi bi-check-circle-fill"></i>
+                    Low Risk
+                </h5>
+
+                <p class="mb-0">
+                    Customer engagement looks healthy.
+                    Continue maintaining regular communication.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<!-- AI Next Best Action -->
+
+<div class="card shadow mt-4">
+
+    <div class="card-header bg-primary text-white">
+
+        <h4>
+            <i class="bi bi-stars"></i>
+            AI Next Best Action
+        </h4>
+
+    </div>
+
+    <div class="card-body">
+
+        <ul class="list-group">
+
+            <li class="list-group-item">
+                <i class="bi bi-envelope-fill text-primary"></i>
+                Send a personalized email.
+            </li>
+
+            <li class="list-group-item">
+                <i class="bi bi-telephone-fill text-success"></i>
+                Schedule a follow-up call.
+            </li>
+
+            <li class="list-group-item">
+                <i class="bi bi-gift-fill text-warning"></i>
+                Offer a promotional discount.
+            </li>
+
+            <li class="list-group-item">
+                <i class="bi bi-chat-heart-fill text-danger"></i>
+                Request customer feedback.
+            </li>
+
+            <li class="list-group-item">
+                <i class="bi bi-arrow-repeat text-info"></i>
+                Review engagement after the next outreach.
+            </li>
+
+        </ul>
+
+    </div>
+
+</div>
+
+<!-- AI Engagement Score -->
+
+<div class="card shadow mt-4">
+
+    <div class="card-header bg-success text-white">
+
+        <h4>
+            <i class="bi bi-graph-up-arrow"></i>
+            AI Engagement Score
+        </h4>
+
+    </div>
+
+    <div class="card-body">
+
+        {% if customer.status == "Dormant" %}
+
+            {% set score = 25 %}
+
+        {% elif customer.outreach|length == 0 %}
+
+            {% set score = 55 %}
+
+        {% elif customer.outreach|length < 3 %}
+
+            {% set score = 75 %}
+
+        {% else %}
+
+            {% set score = 95 %}
+
+        {% endif %}
+
+        <h2 class="text-center mb-4">{{ score }}%</h2>
+
+        <div class="progress" style="height:30px;">
+
+            <div class="progress-bar
+                {% if score >= 80 %}
+                    bg-success
+                {% elif score >= 50 %}
+                    bg-warning
+                {% else %}
+                    bg-danger
+                {% endif %}"
+
+                role="progressbar"
+
+                style="width: {{ score }}%;">
+
+                {{ score }}%
+
+            </div>
+
+        </div>
+
+        <div class="mt-4">
+
+            {% if score >= 80 %}
+
+                <div class="alert alert-success">
+
+                    <strong>Excellent Engagement</strong><br>
+
+                    Customer is actively interacting with your business.
+
+                </div>
+
+            {% elif score >= 50 %}
+
+                <div class="alert alert-warning">
+
+                    <strong>Moderate Engagement</strong><br>
+
+                    Continue regular follow-ups to improve engagement.
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-danger">
+
+                    <strong>Low Engagement</strong><br>
+
+                    Immediate outreach is recommended to prevent customer loss.
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends "layout.html" %}
+
+{% block title %}Edit Outreach{% endblock %}
+
+{% block page_title %}Edit Outreach{% endblock %}
+
+{% block content %}
+
+<div class="card shadow">
+
+    <div class="card-header">
+        <h4>Edit Outreach</h4>
+    </div>
+
+    <div class="card-body">
+
+        <form method="POST">
+
+            <!-- Customer -->
+
+            <div class="mb-3">
+
+                <label class="form-label">Customer</label>
+
+                <select name="customer_id" class="form-select" required>
+
+                    {% for customer in customers %}
+
+                    <option value="{{ customer.id }}"
+                        {% if customer.id == record.customer_id %}
+                            selected
+                        {% endif %}>
+
+                        {{ customer.first_name }}
+                        {{ customer.last_name }}
+                        - {{ customer.company }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <!-- Channel -->
+
+            <div class="mb-3">
+
+                <label class="form-label">Channel</label>
+
+                <select name="channel" class="form-select">
+
+                    <option
+                        {% if record.channel == "Email" %}
+                        selected
+                        {% endif %}>
+                        Email
+                    </option>
+
+                    <option
+                        {% if record.channel == "SMS" %}
+                        selected
+                        {% endif %}>
+                        SMS
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- Message -->
+
+            <div class="mb-3">
+
+                <label class="form-label">Message</label>
+
+                <textarea
+                    name="message"
+                    id="message"
+                    rows="6"
+                    class="form-control">{{ record.message }}</textarea>
+
+            </div>
+
+            <!-- Status -->
+
+            <div class="mb-3">
+
+                <label class="form-label">Status</label>
+
+                <select name="status" class="form-select">
+
+                    <option
+                        {% if record.status == "Draft" %}
+                        selected
+                        {% endif %}>
+                        Draft
+                    </option>
+
+                    <option
+                        {% if record.status == "Approved" %}
+                        selected
+                        {% endif %}>
+                        Approved
+                    </option>
+
+                    <option
+                        {% if record.status == "Sent" %}
+                        selected
+                        {% endif %}>
+                        Sent
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- Follow-up -->
+
+            <div class="mb-4">
+
+                <label class="form-label">Follow-up Date</label>
+
+                <input
+                    type="date"
+                    name="follow_up"
+                    class="form-control"
+                    value="{{ record.follow_up }}">
+
+            </div>
+
+            <button class="btn btn-primary">
+
+                <i class="bi bi-check-circle"></i>
+
+                Update Outreach
+
+            </button>
+
+            <a href="/outreach"
+               class="btn btn-outline-secondary">
+
+                <i class="bi bi-arrow-left"></i>
+
+                Cancel
+
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

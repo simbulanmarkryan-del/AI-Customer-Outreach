@@ -1,0 +1,330 @@
+{% extends "layout.html" %}
+
+{% block title %}Reports{% endblock %}
+
+{% block page_title %}Reports Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="row g-4">
+
+    <div class="col-md-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-people fs-1 text-primary"></i>
+                <h6 class="text-muted mt-2">Total Customers</h6>
+                <h2>{{ customer_count }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-chat-square-text fs-1 text-success"></i>
+                <h6 class="text-muted mt-2">Total Outreach</h6>
+                <h2>{{ outreach_count }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-pencil-square fs-1 text-warning"></i>
+                <h6 class="text-muted mt-2">Draft Messages</h6>
+                <h2>{{ draft_count }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-send-check fs-1 text-info"></i>
+                <h6 class="text-muted mt-2">Sent Messages</h6>
+                <h2>{{ sent_count }}</h2>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="card shadow mt-4">
+
+    <div class="card-header">
+        <h4><i class="bi bi-table"></i> Summary Report</h4>
+    </div>
+
+    <div class="card-body">
+
+        <table class="table table-hover">
+
+            <tbody>
+
+                <tr>
+                    <th>Total Customers</th>
+                    <td>{{ customer_count }}</td>
+                </tr>
+
+                <tr>
+                    <th>Total Outreach</th>
+                    <td>{{ outreach_count }}</td>
+                </tr>
+
+                <tr>
+                    <th>Draft Messages</th>
+                    <td>{{ draft_count }}</td>
+                </tr>
+
+                <tr>
+                    <th>Approved Messages</th>
+                    <td>{{ approved_count }}</td>
+                </tr>
+
+                <tr>
+                    <th>Sent Messages</th>
+                    <td>{{ sent_count }}</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<div class="row mt-4">
+
+    <div class="col-lg-8">
+
+        <div class="card shadow">
+
+            <div class="card-header">
+                <h4>
+                    <i class="bi bi-bar-chart-line"></i>
+                    Performance Overview
+                </h4>
+            </div>
+
+            <div class="card-body">
+
+                <div style="height:400px;">
+                    <canvas id="reportChart"></canvas>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-4">
+
+        <div class="card shadow">
+
+            <div class="card-header">
+                <h4>
+                    <i class="bi bi-pie-chart"></i>
+                    Outreach Status
+                </h4>
+            </div>
+
+            <div class="card-body">
+
+                <div style="height:300px;">
+                    <canvas id="statusChart"></canvas>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+
+const reportData = {
+    customerCount: {{ customer_count | tojson }},
+    outreachCount: {{ outreach_count | tojson }},
+    draftCount: {{ draft_count | tojson }},
+    approvedCount: {{ approved_count | tojson }},
+    sentCount: {{ sent_count | tojson }}
+};
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // Performance Bar Chart
+
+    const reportCanvas = document.getElementById("reportChart");
+
+    if (reportCanvas) {
+
+        new Chart(reportCanvas.getContext("2d"), {
+
+            type: "bar",
+
+            data: {
+
+                labels: [
+                    "Customers",
+                    "Outreach",
+                    "Draft",
+                    "Sent"
+                ],
+
+                datasets: [{
+
+                    label: "Total",
+
+                    data: [
+                        reportData.customerCount,
+                        reportData.outreachCount,
+                        reportData.draftCount,
+                        reportData.sentCount
+                    ]
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+
+                        display: false
+
+                    }
+
+                }
+
+            }
+
+        });
+
+    }
+
+    // Outreach Status Pie Chart
+
+    const statusCanvas = document.getElementById("statusChart");
+
+    if (statusCanvas) {
+
+        new Chart(statusCanvas.getContext("2d"), {
+
+            type: "pie",
+
+            data: {
+
+                labels: [
+                    "Draft",
+                    "Approved",
+                    "Sent"
+                ],
+
+                datasets: [{
+
+                    data: [
+                        reportData.draftCount,
+                        reportData.approvedCount,
+                        reportData.sentCount
+                    ]
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+                maintainAspectRatio: false
+
+            }
+
+        });
+
+    }
+
+});
+
+</script>
+
+<div class="card shadow mt-4">
+
+    <div class="card-header">
+        <h4>
+            <i class="bi bi-clock-history"></i>
+            Recent Outreach
+        </h4>
+    </div>
+
+    <div class="card-body">
+
+        <table class="table table-hover">
+
+            <thead>
+
+                <tr>
+                    <th>Customer</th>
+                    <th>Subject</th>
+                    <th>Status</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for item in recent_outreach %}
+
+                <tr>
+
+                    <td>{{ item.customer.name }}</td>
+
+                    <td>{{ item.subject }}</td>
+
+                    <td>
+
+                        {% if item.status == "Draft" %}
+                            <span class="badge bg-warning text-dark">
+                                Draft
+                            </span>
+
+                        {% elif item.status == "Approved" %}
+                            <span class="badge bg-success">
+                                Approved
+                            </span>
+
+                        {% else %}
+                            <span class="badge bg-primary">
+                                Sent
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

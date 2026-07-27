@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CustomerPulse AI CRM{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+<style>
+
+body{
+    background:#f3f2f1;
+    font-family:"Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    color:#323130;
+}
+
+/* Sidebar */
+
+.sidebar{
+    width:240px;
+    height:100vh;
+    position:fixed;
+    left:0;
+    top:0;
+    background:#ffffff;
+    border-right:1px solid #edebe9;
+}
+
+.sidebar h3{
+    padding:24px;
+    font-size:22px;
+    font-weight:600;
+    text-align:center;
+    color:#0f6cbd;
+    border-bottom:1px solid #edebe9;
+}
+
+.sidebar a{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:#323130;
+    padding:14px 24px;
+    text-decoration:none;
+    font-size:15px;
+    transition:.2s;
+}
+
+.sidebar a:hover{
+    background:#f3f2f1;
+    color:#0f6cbd;
+}
+
+.sidebar a i{
+    font-size:18px;
+}
+
+/* Main */
+
+.content{
+    margin-left:240px;
+    padding:30px;
+}
+
+/* Top Bar */
+
+.topbar{
+    background:white;
+    border:1px solid #edebe9;
+    border-radius:10px;
+    padding:18px 25px;
+    margin-bottom:25px;
+}
+
+/* Cards */
+
+.card{
+    background:#ffffff;
+    border:1px solid #edebe9;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
+    transition:.2s;
+}
+
+.card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 20px rgba(0,0,0,.08);
+}
+
+/* Card Numbers */
+
+.card h1{
+    font-size:38px;
+    font-weight:600;
+    color:#323130;
+}
+
+/* Tables */
+
+.table{
+    margin-bottom:0;
+}
+
+.table thead{
+    background:#faf9f8;
+}
+
+.table th{
+    color:#605e5c;
+    font-weight:600;
+}
+
+/* Buttons */
+
+.btn{
+    border-radius:8px;
+}
+
+/* Badges */
+
+.badge{
+    font-size:13px;
+    padding:7px 10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <h3>
+    <i class="bi bi-activity"></i>
+    CustomerPulse AI
+    </h3>
+
+    <a href="/dashboard">
+    <i class="bi bi-grid"></i>
+    Dashboard
+</a>
+
+<a href="/customers">
+    <i class="bi bi-people"></i>
+    Customers
+</a>
+
+<a href="/outreach">
+    <i class="bi bi-chat-square-text"></i>
+    Outreach
+</a>
+
+<a href="/reports">
+    <i class="bi bi-bar-chart"></i>
+    Reports
+</a>
+
+<a href="/settings">
+    <i class="bi bi-gear"></i>
+    Settings
+</a>
+
+</div>
+
+<div class="content">
+
+    <div class="topbar d-flex justify-content-between">
+
+        <h4>{% block page_title %}{% endblock %}</h4>
+
+        <div class="d-flex align-items-center gap-3">
+
+    <span>
+        <i class="bi bi-person-circle"></i>
+        {{ current_user.name }}
+    </span>
+
+    <a href="/logout" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-box-arrow-right"></i>
+        Logout
+    </a>
+
+    </div>
+
+    </div>
+
+{% block content %}
+{% endblock %}
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+{% block scripts %}
+{% endblock %}
+
+<footer class="text-center text-muted mt-5 mb-3">
+
+    <small>
+
+        CustomerPulse AI CRM
+        <br>
+
+        Developed by Mark Ryan Simbulan
+
+    </small>
+
+</footer>
+
+</body>
+</html>

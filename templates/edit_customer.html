@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+
+{% block title %}Edit Customer{% endblock %}
+
+{% block page_title %}
+Edit Customer
+{% endblock %}
+
+{% block content %}
+
+<div class="card shadow p-4">
+
+<form method="POST">
+
+<div class="row">
+
+<div class="col-md-6 mb-3">
+<label class="form-label">First Name</label>
+<input type="text" class="form-control" name="first_name" value="{{ customer.first_name }}" required>
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Last Name</label>
+<input type="text" class="form-control" name="last_name" value="{{ customer.last_name }}" required>
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Company</label>
+<input type="text" class="form-control" name="company" value="{{ customer.company }}">
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Email</label>
+<input type="email" class="form-control" name="email" value="{{ customer.email }}">
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Phone</label>
+<input type="text" class="form-control" name="phone" value="{{ customer.phone }}">
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Segment</label>
+<input type="text" class="form-control" name="segment" value="{{ customer.segment }}">
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Status</label>
+<input type="text" class="form-control" name="status" value="{{ customer.status }}">
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Last Contact</label>
+<input type="text" class="form-control" name="last_contact" value="{{ customer.last_contact }}">
+</div>
+
+<div class="col-12 mb-3">
+<label class="form-label">Notes</label>
+<textarea class="form-control" rows="4" name="notes">{{ customer.notes }}</textarea>
+</div>
+
+<div class="col-12">
+
+<button class="btn btn-warning">
+💾 Update Customer
+</button>
+
+<a href="/customers" class="btn btn-secondary">
+Cancel
+</a>
+
+</div>
+
+</div>
+
+</form>
+
+</div>
+
+{% endblock %}
